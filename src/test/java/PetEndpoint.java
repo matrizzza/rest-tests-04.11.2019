@@ -1,8 +1,9 @@
-public class ApiPet {
-    long petId;
-    private String uri = "https://petstore.swagger.io/v2/pet/";
+public class PetEndpoint {
+    public static final String CREATE_PET = "/pet";
+    public static final String GET_PET = "/pet/{petId}";
+    public static final String DELETE_PET = "/pet/{petId}";
 
-    String body = "{\n" +
+    public static final String BODY = "{\n" +
             "  \"id\": 0,\n" +
             "  \"category\": {\n" +
             "    \"id\": 0,\n" +
@@ -20,20 +21,4 @@ public class ApiPet {
             "  ],\n" +
             "  \"status\": \"available\"\n" +
             "}";
-
-    public String getUri() {
-        return uri;
-    }
-
-    public Long getPetId() {
-        return petId;
-    }
-
-    public void setPetId(Long petId) {
-        this.petId = petId;
-    }
-
-    public String getBody() {
-        return body;
-    }
 }
