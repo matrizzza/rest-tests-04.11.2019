@@ -9,16 +9,37 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
 class PetEndpoint {
-    private static final String CREATE_PET = "/pet";
-    static final String GET_PET = "/pet/{petId}";
     static final String DELETE_PET = "/pet/{petId}";
+    private static final String GET_PET = "/pet/{petId}";
+    private static final String CREATE_PET = "/pet";
     private static final String BASE_URI = "https://petstore.swagger.io/v2";
 
     private static String petName = "Vasiliy";
     private static String petCategory = "Dog";
+    private static final String BODY = Json.createObjectBuilder()
+            .add("id", 0)
+            .add("category", Json.createObjectBuilder()
+                    .add("id", 0)
+                    .add("name", petCategory))
+            .add("name", petName)
+            .add("photoUrls", Json.createArrayBuilder()
+                    .add("string"))
+            .add("tags", Json.createArrayBuilder()
+                    .add(Json.createObjectBuilder()
+                            .add("id", 0)
+                            .add("name", "string")))
+            .add("status", "available")
+            .build()
+            .toString();
 
-    static String getPetName() {
-        return petName;
+    private static long petId;
+
+    static long getPetId() {
+        return petId;
+    }
+
+    static void setPetId(long petId) {
+        PetEndpoint.petId = petId;
     }
 
 //    static final String BODY = new JSONObject()
@@ -36,21 +57,9 @@ class PetEndpoint {
 //            .put("status", "available")
 //            .toString();
 
-    private static final String BODY = Json.createObjectBuilder()
-            .add("id", 0)
-            .add("category", Json.createObjectBuilder()
-                    .add("id", 0)
-                    .add("name", petCategory))
-            .add("name", petName)
-            .add("photoUrls", Json.createArrayBuilder()
-                    .add("string"))
-            .add("tags", Json.createArrayBuilder()
-                    .add(Json.createObjectBuilder()
-                            .add("id", 0)
-                            .add("name", "string")))
-            .add("status", "available")
-            .build()
-            .toString();
+    static String getPetName() {
+        return petName;
+    }
 
     static RequestSpecification given() {
         return RestAssured
@@ -58,6 +67,12 @@ class PetEndpoint {
                 .baseUri(BASE_URI)
                 .log().all()
                 .contentType(ContentType.JSON);
+    }
+
+    static ValidatableResponse getPetRequest() {
+        return given()
+                .get(PetEndpoint.GET_PET, petId)
+                .then();
     }
 
     static ValidatableResponse createPet() {

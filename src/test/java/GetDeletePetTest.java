@@ -9,41 +9,34 @@ import static org.hamcrest.core.Is.is;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GetDeletePetTest {
 
-    private static String petId;
-
     @Before
     public void preconditionsTest2GetPetById(){
         ValidatableResponse response = PetEndpoint.createPet();
-        petId = response.extract().path("id");
+        PetEndpoint.setPetId(response.extract().path("id"));
     }
 
     @Test
     public void test1GetPetById() {
-        PetEndpoint.given()
-                .get(PetEndpoint.GET_PET, petId)
-                .then()
+        PetEndpoint.getPetRequest()
                 .statusCode(200)
+                .body("id", is(PetEndpoint.getPetId()))
                 .body("name", is(PetEndpoint.getPetName()))
-                .log().all()
-        ;
+                .log().all();
     }
 
     @Test
     public void test3DeletePetById() {
         PetEndpoint.given()
-                .delete(PetEndpoint.DELETE_PET, petId)
+                .delete(PetEndpoint.DELETE_PET, PetEndpoint.getPetId())
                 .then()
                 .statusCode(200)
                 .log().all();
 
-        PetEndpoint.given()
-                .get(PetEndpoint.GET_PET, petId)
-                .then()
+        PetEndpoint.getPetRequest()
                 .statusCode(404)
                 .body("code", is(1))
                 .body("message", is("Pet not found"))
-                .log().all()
-        ;
+                .log().all();
     }
 
 }
