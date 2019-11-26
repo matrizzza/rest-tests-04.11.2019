@@ -1,42 +1,39 @@
 import io.restassured.response.ValidatableResponse;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GetDeletePetTest {
 
+    PetEndpoint petEndpoint = new PetEndpoint();
+
     @Before
-    public void preconditionsTest2GetPetById(){
-        ValidatableResponse response = PetEndpoint.createPet();
+    public void preconditionsTests(){
+        ValidatableResponse response = PetEndpoint.createPet()
+                .statusCode(is(200))
+                .body("category.name", is(not("")))
+                .body("name", is(PetEndpoint.getPetName()));
         PetEndpoint.setPetId(response.extract().path("id"));
     }
 
     @Test
-    public void test1GetPetById() {
-        PetEndpoint.getPetRequest()
+    public void getPetById() {
+        PetEndpoint.getPet()
                 .statusCode(200)
                 .body("id", is(PetEndpoint.getPetId()))
-                .body("name", is(PetEndpoint.getPetName()))
-                .log().all();
+                .body("name", is(PetEndpoint.getPetName()));
     }
 
     @Test
-    public void test3DeletePetById() {
-        PetEndpoint.given()
-                .delete(PetEndpoint.DELETE_PET, PetEndpoint.getPetId())
-                .then()
-                .statusCode(200)
-                .log().all();
+    public void deletePetById() {
+        PetEndpoint.deletePet()
+                .statusCode(200);
 
-        PetEndpoint.getPetRequest()
+        PetEndpoint.getPet()
                 .statusCode(404)
                 .body("code", is(1))
-                .body("message", is("Pet not found"))
-                .log().all();
+                .body("message", is("Pet not found"));
     }
-
 }
