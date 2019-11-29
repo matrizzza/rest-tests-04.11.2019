@@ -1,3 +1,5 @@
+import data.Pet;
+import data.StatusType;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -42,7 +44,7 @@ class PetEndpoint {
         RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL));
     }
 
-    private static void setBody() {
+    static void setBody() {
         body = Json.createObjectBuilder()
                 .add("id", petId)
                 .add("category", Json.createObjectBuilder()
@@ -80,23 +82,21 @@ class PetEndpoint {
                 .then();
     }
 
-    static ValidatableResponse createPet() {
-        setBody();
+    static ValidatableResponse createPet(Pet pet) {
         return given()
-                .body(body)
+                .body(pet)
                 .post(CREATE_PET)
                 .then();
     }
 
     static ValidatableResponse updatePet() {
-        setBody();
         return given()
                 .body(body)
                 .put(UPDATE_PET)
                 .then();
     }
 
-    static ValidatableResponse updatePetWithData(String petName) {
+    static ValidatableResponse updatePetWithData(long petId, String petName) {
         return given()
                 .contentType(ContentType.URLENC)
                 .formParam("name", petName)
