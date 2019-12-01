@@ -1,7 +1,9 @@
 package data;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.Data;
 
+@Data
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Pet {
     private long id;
@@ -13,10 +15,10 @@ public class Pet {
 
     public Pet(long id, String categoryName, String name, String status) {
         this.id = id;
-        this.category = new Category(0, categoryName);
+        this.category = Category.builder().id(1).name(categoryName).build();
         this.name = name;
         this.status = status;
-        this.photoUrls = new String[]{};
-        this.tags = new Tag[]{};
+        this.photoUrls = new String[]{"some uri to photo"};
+        this.tags = new Tag[]{Tag.builder().id(111).name("test_tag_111").build()};
     }
 }

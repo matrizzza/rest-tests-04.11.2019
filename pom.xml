@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
-            <version>LATEST</version>
+            <version>1.1.4</version>
         </dependency>
 
         <dependency>

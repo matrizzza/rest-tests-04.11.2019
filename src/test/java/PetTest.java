@@ -5,37 +5,34 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 
-public class GetUpdateDeletePetTest {
+public class PetTest {
 
-    private Pet pet = new Pet(0, "Dog", "MyPetName_zzz", StatusType.trulala.toString());
+    private static Pet pet = new Pet(0, "Dog", "MyPetName_zzz", StatusType.trulala.toString());
 
     @Before
     public void preconditionsTest() {
-        PetEndpoint.setPetId(0);
-        PetEndpoint.setBody();
         ValidatableResponse response = PetEndpoint.createPet(pet)
                 .statusCode(is(200))
-                .body("category.name", is(not("")))
-                .body("name", is(PetEndpoint.getPetName()));
-        PetEndpoint.setPetId(response.extract().path("id"));
+                .body("category.name", is(pet.getCategory().getName()))
+                .body("name", is(pet.getName()));
+        pet.setId(response.extract().path("id"));
     }
 
     @Test
     public void getPetById() {
-        PetEndpoint.getPet()
+        PetEndpoint.getPet(pet.getId())
                 .statusCode(200)
-                .body("id", is(PetEndpoint.getPetId()))
-                .body("name", is(PetEndpoint.getPetName()));
+                .body("id", is(pet.getId()))
+                .body("name", is(pet.getName()));
     }
 
     @Test
     public void getPetByStatus() {
         PetEndpoint.getPetByStatus(StatusType.trulala)
                 .statusCode(200)
-                .body("status[0]", is(StatusType.trulala.toString()));
+                .body("status[0]", is(StatusType.trulala.toString())); //TODO check all statuses of pets
 
 //        PetEndpoint.getPetByStatus(data.StatusType.pending)
 //                .statusCode(200);
@@ -50,41 +47,37 @@ public class GetUpdateDeletePetTest {
 
     @Test
     public void deletePetById() {
-        PetEndpoint.deletePet()
+        PetEndpoint.deletePet(pet.getId())
                 .statusCode(200);
 
-        PetEndpoint.getPet()
+        PetEndpoint.getPet(pet.getId())
                 .statusCode(404)
                 .body("code", is(1))
-                .body("message", is("data.Pet not found"));
+                .body("message", is("Pet not found"));
     }
 
     @Test
     public void updatePetTest() {
-        PetEndpoint.setPetName(PetEndpoint.getPetName() + "_new");
-        PetEndpoint.setBody();
-        PetEndpoint.updatePet()
+        pet.setName(pet.getName() + "_new");
+        PetEndpoint.updatePet(pet)
                 .statusCode(200)
-                .body("name", is(PetEndpoint.getPetName()));
+                .body("name", is(pet.getName()));
     }
 
     @Test
     public void updatePetTestWithData() {
-        PetEndpoint.updatePetWithData(PetEndpoint.getPetId(), PetEndpoint.getPetName() + "_new")
+        PetEndpoint.updatePetWithData(pet.getId(), pet.getName() + "_new")
                 .statusCode(200);
-        /*
-            Странно, почему не приходит Json в ответ на POST !!!
-            проверяем GET-ом предыдущий POST
-         */
-        PetEndpoint.getPet()
+
+        PetEndpoint.getPet(pet.getId())
                 .statusCode(200)
-                .body("id", is(PetEndpoint.getPetId()))
-                .body("name", is(PetEndpoint.getPetName() + "_new"));
+                .body("id", is(pet.getId()))
+                .body("name", is(pet.getName() + "_new"));
     }
 
     @Test
     public void uploadImage() {
-        PetEndpoint.uploadImageByPetId()
+        PetEndpoint.uploadImageByPetId(pet.getId())
                 .statusCode(200)
                 .body("code", is(200))
                 .body("message", containsString("doggy.jpeg"));

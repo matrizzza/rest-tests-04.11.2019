@@ -1,16 +1,10 @@
 import data.Pet;
 import data.StatusType;
 import io.restassured.RestAssured;
-import io.restassured.filter.log.LogDetail;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
-import lombok.Getter;
-import lombok.Setter;
 
-import javax.json.Json;
 import java.io.File;
 
 class PetEndpoint {
@@ -23,43 +17,10 @@ class PetEndpoint {
     private static final String BASE_URI = "https://petstore.swagger.io/v2";
     private static final String UPLOAD_IMAGE_URI = "/pet/{petId}/uploadImage";
 
-    @Getter
-    @Setter
-    private static String petName = "MyPetName_zzz";
-    @Getter
-    @Setter
-    private static long petId = 0;
-    @Getter
-    @Setter
-    private static String petCategory = "Dog";
-    @Getter
-    @Setter
-    private static String body;
-    @Getter
-    @Setter
-    private static String status = StatusType.available.toString();
-
     static {
-        RestAssured.filters(new RequestLoggingFilter(LogDetail.ALL));
-        RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL));
-    }
-
-    static void setBody() {
-        body = Json.createObjectBuilder()
-                .add("id", petId)
-                .add("category", Json.createObjectBuilder()
-                        .add("id", 0)
-                        .add("name", petCategory))
-                .add("name", petName)
-                .add("photoUrls", Json.createArrayBuilder()
-                        .add("string"))
-                .add("tags", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("id", 0)
-                                .add("name", "string")))
-                .add("status", status)
-                .build()
-                .toString();
+//        RestAssured.filters(new RequestLoggingFilter(LogDetail.ALL));
+//        RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL));
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
     private static RequestSpecification given() {
@@ -69,9 +30,9 @@ class PetEndpoint {
                 .contentType(ContentType.JSON);
     }
 
-    static ValidatableResponse getPet() {
+    static ValidatableResponse getPet(long petId) {
         return given()
-                .get(PetEndpoint.GET_PET, petId)
+                .get(GET_PET, petId)
                 .then();
     }
 
@@ -89,9 +50,9 @@ class PetEndpoint {
                 .then();
     }
 
-    static ValidatableResponse updatePet() {
+    static ValidatableResponse updatePet(Pet pet) {
         return given()
-                .body(body)
+                .body(pet)
                 .put(UPDATE_PET)
                 .then();
     }
@@ -105,7 +66,7 @@ class PetEndpoint {
                 .then();
     }
 
-    static ValidatableResponse uploadImageByPetId() {
+    static ValidatableResponse uploadImageByPetId(long petId) {
         return given()
                 .contentType("multipart/form-data")
                 .formParam("additionalMetadata", "doggy_image")  //work without this line... is it correct? O_o
@@ -115,7 +76,7 @@ class PetEndpoint {
                 ;
     }
 
-    static ValidatableResponse deletePet() {
+    static ValidatableResponse deletePet(long petId) {
         return given()
                 .delete(DELETE_PET, petId)
                 .then();
