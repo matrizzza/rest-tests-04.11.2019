@@ -1,6 +1,7 @@
 package data;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -11,9 +12,10 @@ public class Pet {
     private String name;
     private String[] photoUrls;
     private Tag[] tags;
-    private String status;
+    private StatusType status;
 
-    public Pet(long id, String categoryName, String name, String status) {
+    @Builder
+    public Pet(long id, String categoryName, String name, StatusType status) {
         this.id = id;
         this.category = Category.builder().id(1).name(categoryName).build();
         this.name = name;

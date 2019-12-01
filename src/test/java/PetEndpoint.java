@@ -73,8 +73,7 @@ class PetEndpoint {
                 .formParam("additionalMetadata", "doggy_image")  //work without this line... is it correct? O_o
                 .multiPart(new File("D:\\doggy.jpeg"))
                 .post(UPLOAD_IMAGE_URI, petId)
-                .then()
-                ;
+                .then();
     }
 
     static ValidatableResponse deletePet(long petId) {

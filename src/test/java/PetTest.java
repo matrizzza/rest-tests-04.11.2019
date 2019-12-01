@@ -5,11 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.core.Is.is;
 
 public class PetTest {
 
-    private static Pet pet = new Pet(0, "Dog", "MyPetName_zzz", StatusType.trulala.toString());
+    private static Pet pet =
+            Pet.builder().id(0).categoryName("CategoryOfMyPet").name("MyPetName_zxz").status(StatusType.trulala).build();
 
     @Before
     public void preconditionsTest() {
@@ -32,18 +34,12 @@ public class PetTest {
     public void getPetByStatus() {
         PetEndpoint.getPetByStatus(StatusType.trulala)
                 .statusCode(200)
-                .body("status[0]", is(StatusType.trulala.toString())); //TODO check all statuses of pets
+                .body("status", everyItem(is(StatusType.trulala.toString()))); //check all statuses of pets DONE!
 
-//        PetEndpoint.getPetByStatus(data.StatusType.pending)
-//                .statusCode(200);
-//
-//        PetEndpoint.getPetByStatus(data.StatusType.sold)
-//                .statusCode(200);
-
-//        PetEndpoint.getPetByStatus(data.StatusType.invalid)
-//                .statusCode(400);
+        PetEndpoint.getPetByStatus(data.StatusType.sold)
+                .statusCode(200)
+                .body("status", everyItem(is(StatusType.sold.toString())));
     }
-
 
     @Test
     public void deletePetById() {
