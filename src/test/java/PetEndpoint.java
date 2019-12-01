@@ -1,6 +1,7 @@
 import data.Pet;
 import data.StatusType;
 import io.restassured.RestAssured;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
@@ -20,7 +21,7 @@ class PetEndpoint {
     static {
 //        RestAssured.filters(new RequestLoggingFilter(LogDetail.ALL));
 //        RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL));
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL);
     }
 
     private static RequestSpecification given() {
