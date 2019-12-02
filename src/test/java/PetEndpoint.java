@@ -2,6 +2,8 @@ import data.Pet;
 import data.StatusType;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
@@ -9,19 +11,20 @@ import io.restassured.specification.RequestSpecification;
 import java.io.File;
 
 class PetEndpoint {
+    private static final String BASE_URI = "https://petstore.swagger.io/v2";
+
     private static final String DELETE_PET = "/pet/{petId}";
     private static final String GET_PET = "/pet/{petId}";
     private static final String GET_PET_BY_STATUS = "/pet/findByStatus";
     private static final String UPDATE_PET = "/pet";
     private static final String UPDATE_PET_WITH_DATA = "/pet/{petId}";
     private static final String CREATE_PET = "/pet";
-    private static final String BASE_URI = "https://petstore.swagger.io/v2";
     private static final String UPLOAD_IMAGE_URI = "/pet/{petId}/uploadImage";
 
     static {
-//        RestAssured.filters(new RequestLoggingFilter(LogDetail.ALL));
-//        RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL));
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL);
+        RestAssured.filters(new RequestLoggingFilter(LogDetail.ALL));
+        RestAssured.filters(new ResponseLoggingFilter(LogDetail.ALL));
+//        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL);
     }
 
     private static RequestSpecification given() {
@@ -67,11 +70,11 @@ class PetEndpoint {
                 .then();
     }
 
-    static ValidatableResponse uploadImageByPetId(long petId) {
+    static ValidatableResponse uploadImageByPetId(long petId, File file) {
         return given()
                 .contentType("multipart/form-data")
                 .formParam("additionalMetadata", "doggy_image")  //work without this line... is it correct? O_o
-                .multiPart(new File("D:\\doggy.jpeg"))
+                .multiPart(file)
                 .post(UPLOAD_IMAGE_URI, petId)
                 .then();
     }

@@ -4,6 +4,9 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.net.URL;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.core.Is.is;
@@ -11,7 +14,15 @@ import static org.hamcrest.core.Is.is;
 public class PetTest {
 
     private static Pet pet =
-            Pet.builder().id(0).categoryName("CategoryOfMyPet").name("MyPetName_zxz").status(StatusType.trulala).build();
+            Pet.builder()
+                    .id(0)
+                    .categoryName("CategoryOfMyPet")
+                    .name("MyPetName_zxz")
+                    .status(StatusType.trulala)
+                    .build();
+
+    URL filePath = getClass().getResource("doggy.jpeg");
+    File file = new File(filePath.getPath());
 
     @Before
     public void preconditionsTest() {
@@ -54,8 +65,9 @@ public class PetTest {
 
     @Test
     public void updatePetTest() {
-        pet.setName(pet.getName() + "_new");
-        PetEndpoint.updatePet(pet)
+        Pet updatedPet = pet.toBuilder().name(pet.getName() + "_new").build();
+
+        PetEndpoint.updatePet(updatedPet)
                 .statusCode(200)
                 .body("name", is(pet.getName()));
     }
@@ -73,7 +85,7 @@ public class PetTest {
 
     @Test
     public void uploadImage() {
-        PetEndpoint.uploadImageByPetId(pet.getId())
+        PetEndpoint.uploadImageByPetId(pet.getId(), file)
                 .statusCode(200)
                 .body("code", is(200))
                 .body("message", containsString("doggy.jpeg"));

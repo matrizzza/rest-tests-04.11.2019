@@ -6,5 +6,5 @@ public enum StatusType {
     sold,
     invalid,
     trulala,
-    bla_bla_bla;
+    bla_bla_bla
 }

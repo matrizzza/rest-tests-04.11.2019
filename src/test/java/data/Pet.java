@@ -14,7 +14,7 @@ public class Pet {
     private Tag[] tags;
     private StatusType status;
 
-    @Builder
+    @Builder(toBuilder = true)
     public Pet(long id, String categoryName, String name, StatusType status) {
         this.id = id;
         this.category = Category.builder().id(1).name(categoryName).build();
